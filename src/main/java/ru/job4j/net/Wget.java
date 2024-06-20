@@ -7,29 +7,33 @@ import java.net.URL;
 
 public class Wget implements Runnable {
     private final String url;
+    private final String fileName;
     private final int speed;
 
-    public Wget(String url, int speed) {
+    public Wget(String url, String fileName, int speed) {
         this.url = url;
+        this.fileName = fileName;
         this.speed = speed;
     }
 
     @Override
     public void run() {
         try {
-            var file = new File("tmp.xml");
-            try (var input = new URL(url).openStream();
-            var output = new FileOutputStream(file)) {
-                var dataBuffer = new byte[512];
+            var file = new File(fileName);
+            try (var input = new URL(url + fileName).openStream();
+                 var output = new FileOutputStream(file)) {
+                var startAt = System.currentTimeMillis();
+                int counter = 0;
                 int bytesRead;
-                while ((bytesRead = input.read(dataBuffer, 0, dataBuffer.length)) != -1) {
-                    var downloadAt = System.nanoTime();
-                    output.write(dataBuffer, 0, bytesRead);
-                    long millis = 512000000 / (System.nanoTime() - downloadAt);
-                    if (millis > speed && speed < 6000) {
-                        Thread.sleep(millis / speed);
-                        System.out.println("Read 512 bytes : " + millis + " ms. Sleep time " + millis / speed + " ms");
+                while ((bytesRead = input.read()) != -1) {
+                    counter++;
+                    if (counter >= speed) {
+                        Thread.sleep(((System.currentTimeMillis() - startAt) * 1000) / speed);
+                        System.out.println(((System.currentTimeMillis() - startAt) * 1000) / speed);
+                        counter = 0;
+                        startAt = System.currentTimeMillis();
                     }
+                    output.write(bytesRead);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -39,7 +43,7 @@ public class Wget implements Runnable {
         }
     }
 
-    private static void validate(String url, int speed) {
+    private static void validate(String url, String fileName, int speed) {
         if (url.isBlank()) {
             throw new IllegalArgumentException("empty URL");
         }
@@ -49,14 +53,23 @@ public class Wget implements Runnable {
         if (speed < 0) {
             throw new IllegalArgumentException("speed limit are illegal");
         }
+        if (fileName.length() < 2) {
+            throw new IllegalArgumentException("wrong name of file");
+        }
+        if (!fileName.contains(".")) {
+            throw new IllegalArgumentException("wrong name of file");
+        }
     }
 
     public static void main(String[] args) throws InterruptedException {
-        String url = args[0];
-        int speed = Integer.parseInt(args[1]);
-        validate(url, speed);
-        Thread wget = new Thread(new Wget(url, speed));
-        wget.start();
-        wget.join();
+        if (args.length > 2) {
+            String url = args[0];
+            String fileName = args[1];
+            int speed = Integer.parseInt(args[2]);
+            validate(url, fileName, speed);
+            Thread wget = new Thread(new Wget(url, fileName, speed));
+            wget.start();
+            wget.join();
+        }
     }
 }
