@@ -22,16 +22,21 @@ public class Wget implements Runnable {
             var file = new File(fileName);
             try (var input = new URL(url + fileName).openStream();
                  var output = new FileOutputStream(file)) {
-                var startAt = System.currentTimeMillis();
-                int counter = 0;
+                long counter = 0;
                 int bytesRead;
+                var startAt = System.nanoTime();
                 while ((bytesRead = input.read()) != -1) {
-                    counter++;
-                    if (counter >= speed) {
-                        Thread.sleep(((System.currentTimeMillis() - startAt) * 1000) / speed);
-                        System.out.println(((System.currentTimeMillis() - startAt) * 1000) / speed);
-                        counter = 0;
-                        startAt = System.currentTimeMillis();
+                    counter += bytesRead;
+                    if (speed < 6000 && counter >= speed) {
+                        double interval = (double) (System.nanoTime() - startAt) / 1000000;
+                        startAt = System.nanoTime();
+                        if (interval < 1000) {
+                            long pause = (long) (counter / interval) / 1000;
+                            System.out.println("Read " + counter + " bytes : " + interval + " ms | pause : " + pause);
+                            Thread.sleep(pause);
+                            startAt = System.nanoTime();
+                            counter = 0;
+                        }
                     }
                     output.write(bytesRead);
                 }
