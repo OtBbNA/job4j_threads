@@ -20,25 +20,24 @@ public class Wget implements Runnable {
     public void run() {
         try {
             var file = new File(fileName);
-            try (var input = new URL(url + fileName).openStream();
+            try (var input = new URL(url).openStream();
                  var output = new FileOutputStream(file)) {
-                long counter = 0;
+                var dataBuffer = new byte[128];
+                StringBuilder rslOutput = new StringBuilder();
                 int bytesRead;
-                var startAt = System.nanoTime();
-                while ((bytesRead = input.read()) != -1) {
-                    counter += bytesRead;
-                    if (speed < 6000 && counter >= speed) {
-                        double interval = (double) (System.nanoTime() - startAt) / 1000000;
-                        startAt = System.nanoTime();
-                        if (interval < 1000) {
-                            long pause = (long) (counter / interval) / 1000;
-                            System.out.println("Read " + counter + " bytes : " + interval + " ms | pause : " + pause);
-                            Thread.sleep(pause);
-                            startAt = System.nanoTime();
-                            counter = 0;
-                        }
+                var downloadAt = System.nanoTime();
+                while ((bytesRead = input.read(dataBuffer, 0, dataBuffer.length)) != -1) {
+                    var interval = System.nanoTime() - downloadAt;
+                    var downloadSpeed = (128000000 / interval);
+                    rslOutput.append("Read 128 bytes : " + interval + " nano. Speed : " + downloadSpeed + " b/ms.");
+                    if (downloadSpeed > speed && speed < 6000) {
+                        Thread.sleep((downloadSpeed / speed));
+                        rslOutput.append("Sleep : " + (downloadSpeed / speed) + " ms");
                     }
-                    output.write(bytesRead);
+                    System.out.println(rslOutput);
+                    rslOutput.delete(0, rslOutput.length());
+                    output.write(dataBuffer, 0, bytesRead);
+                    downloadAt = System.nanoTime();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
