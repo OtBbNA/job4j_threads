@@ -19,8 +19,8 @@ public class UserCache {
 
     public List<User> findAll() {
         List<User> rsl = new ArrayList<>();
-        for (Integer index : users.keySet()) {
-            rsl.add(User.of(users.get(index).getName()));
+        for (User user : users.values()) {
+            rsl.add(User.of(user.getName()));
         }
         return rsl;
     }
