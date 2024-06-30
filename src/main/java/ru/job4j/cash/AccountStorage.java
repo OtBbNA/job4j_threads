@@ -33,7 +33,7 @@ public class AccountStorage {
     public boolean transfer(int fromId, int toId, int amount) {
         boolean rsl = false;
         if (getById(fromId).isPresent() && getById(toId).isPresent()
-                && getById(fromId).get().amount()  >= amount) {
+                && getById(fromId).get().amount() >= amount) {
             add(new Account(fromId, getById(fromId).get().amount() - amount));
             add(new Account(toId, getById(toId).get().amount() + amount));
             rsl = true;
