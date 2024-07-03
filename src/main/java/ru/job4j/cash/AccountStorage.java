@@ -16,7 +16,7 @@ public class AccountStorage {
     }
 
     public synchronized boolean update(Account account) {
-        return accounts.replace(account.id(), account) == account;
+        return accounts.replace(account.id(), account) != account;
     }
 
     public synchronized void delete(int id) {

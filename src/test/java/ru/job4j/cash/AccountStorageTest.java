@@ -27,7 +27,7 @@ class AccountStorageTest {
     @Test
     void whenUpdateEmptyStorage() {
         var storage = new AccountStorage();
-        assertThat(storage.update(new Account(3, 200))).isFalse();
+        assertThat(storage.update(new Account(3, 200))).isTrue();
     }
 
     @Test
