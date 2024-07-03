@@ -18,23 +18,19 @@ public class CountBarrier {
         this.total = total;
     }
 
-    public void count() {
-        synchronized (monitor) {
-            monitor.notifyAll();
-            count++;
-            System.out.println(count);
-        }
+    public synchronized void count() {
+        count++;
+        monitor.notifyAll();
+        System.out.println(count);
     }
 
-    public void await() {
-        synchronized (monitor) {
-            while (!(count >= total)) {
-                try {
-                    System.out.println("wait");
-                    monitor.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+    public synchronized void await() {
+        while (count <= total) {
+            try {
+                System.out.println("wait");
+                monitor.wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
