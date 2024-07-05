@@ -24,10 +24,7 @@ public class SimpleBlockingQueue<T> {
                 System.out.println("offerwait");
                 this.wait();
         }
-        if (queue.isEmpty()) {
-            notify();
-
-        }
+        notifyAll();
         queue.add(value);
         System.out.println("off " + value);
     }
@@ -37,10 +34,8 @@ public class SimpleBlockingQueue<T> {
             System.out.println("pollwait");
             this.wait();
         }
-        if (queue.size() == maxsize) {
-            notify();
-        }
         T rsl = queue.poll();
+        notifyAll();
         System.out.println("poll " + rsl);
         return rsl;
     }
