@@ -13,7 +13,7 @@ class SimpleBlockingQueueTest {
                 try {
                     simpleBlockingQueue.offer(i);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
         });
@@ -22,7 +22,7 @@ class SimpleBlockingQueueTest {
                 try {
                     simpleBlockingQueue.poll();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
         });
