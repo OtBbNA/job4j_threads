@@ -39,4 +39,8 @@ public class SimpleBlockingQueue<T> {
         System.out.println("poll " + rsl);
         return rsl;
     }
+
+    public boolean isEmpty() {
+        return queue.isEmpty();
+    }
 }
