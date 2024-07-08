@@ -16,7 +16,7 @@ public class ParallelSearch {
                 }
         );
         consumer.start();
-        new Thread(
+        Thread producer = new Thread(
                 () -> {
                     for (int index = 0; index != 3; index++) {
                         try {
@@ -26,7 +26,10 @@ public class ParallelSearch {
                         }
                     }
                 }
-        ).start();
-        consumer.interrupt();
+        );
+        producer.start();
+        while (!(producer.getState() == Thread.State.TERMINATED)) {
+            consumer.interrupt();
+        }
     }
 }
