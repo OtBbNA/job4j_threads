@@ -21,26 +21,22 @@ public class SimpleBlockingQueue<T> {
 
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == maxsize) {
-                System.out.println("offerwait");
                 this.wait();
         }
         notifyAll();
         queue.add(value);
-        System.out.println("off " + value);
     }
 
     public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
-            System.out.println("pollwait");
             this.wait();
         }
         T rsl = queue.poll();
         notifyAll();
-        System.out.println("poll " + rsl);
         return rsl;
     }
 
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return queue.isEmpty();
     }
 }
