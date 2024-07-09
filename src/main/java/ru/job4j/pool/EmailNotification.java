@@ -14,7 +14,7 @@ public class EmailNotification {
     public synchronized void emailTo(User user) {
         pool.submit(() -> {
                 send(user.username(),
-                        String.format("subject = Notification %s, to email %s. \nbody = Add a new event to %s%n",
+                        String.format("subject = Notification %s, to email %s. %nbody = Add a new event to %s%n",
                                 user.username(), user.email(), user.username()),
                         user.email());
                 }
@@ -26,5 +26,6 @@ public class EmailNotification {
     }
 
     public void send(String subject, String body, String email) {
+        System.out.println(body);
     }
 }
