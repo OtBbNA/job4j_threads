@@ -28,8 +28,12 @@ public class ParallelSearch {
                 }
         );
         producer.start();
-        while (!(producer.getState() == Thread.State.TERMINATED)) {
-            consumer.interrupt();
+        try {
+            producer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            producer.interrupt();
         }
+        consumer.interrupt();
     }
 }
