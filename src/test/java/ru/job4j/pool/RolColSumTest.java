@@ -11,27 +11,29 @@ class RolColSumTest {
 
     @Test
     void asyncSum() throws ExecutionException, InterruptedException {
-        long timeMillis = System.currentTimeMillis();
         int[][] matrix = new int[][]{{1, 7, 2}, {8, 1, 3}, {0, 2, 4}};
-        int[] expected = new int[]{10, 9, 12, 10, 6, 9};
-        RolColSum.Sums[] rsl = RolColSum.asyncSum(matrix);
-        for (int i = 0; i < rsl.length; i++) {
-                assertThat(rsl[i].getRowSum()).isEqualTo(expected[i * 2]);
-                assertThat(rsl[i].getColSum()).isEqualTo(expected[i * 2 + 1]);
-        }
+        Sums[] expected = new Sums[]{
+                new Sums(10, 9),
+                new Sums(12, 10),
+                new Sums(6, 9)
+        };
+        long timeMillis = System.currentTimeMillis();
+        Sums[] rsl = RolColSum.asyncSum(matrix);
         System.out.println(System.currentTimeMillis() - timeMillis);
+        assertThat(rsl).isEqualTo(expected);
     }
 
     @Test
     void mathSum() {
-        long timeMillis = System.currentTimeMillis();
         int[][] matrix = new int[][]{{1, 7, 2}, {8, 1, 3}, {0, 2, 4}};
-        int[] expected = new int[]{10, 9, 12, 10, 6, 9};
-        RolColSum.Sums[] rsl = RolColSum.sum(matrix);
-        for (int i = 0; i < rsl.length; i++) {
-            assertThat(rsl[i].getRowSum()).isEqualTo(expected[i * 2]);
-            assertThat(rsl[i].getColSum()).isEqualTo(expected[i * 2 + 1]);
-        }
+        Sums[] expected = new Sums[]{
+                new Sums(10, 9),
+                new Sums(12, 10),
+                new Sums(6, 9)
+        };
+        long timeMillis = System.currentTimeMillis();
+        Sums[] rsl = RolColSum.sum(matrix);
         System.out.println(System.currentTimeMillis() - timeMillis);
+        assertThat(rsl).isEqualTo(expected);
     }
 }
