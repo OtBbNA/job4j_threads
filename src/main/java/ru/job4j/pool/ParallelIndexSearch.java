@@ -17,7 +17,7 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
         this.value = value;
     }
 
-    private int linearSearch(int right, int left) {
+    private int linearSearch() {
         int rsl = -1;
         for (int i = left; i <= right; i++) {
             if (list[i].equals(value)) {
@@ -31,7 +31,7 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
     @Override
     protected Integer compute() {
         if (right - left <= 10) {
-            return linearSearch(right, left);
+            return linearSearch();
         }
         int middle = (left + right) / 2;
         ParallelIndexSearch<T> searchIndex1 = new ParallelIndexSearch<>(left, middle, list, value);
